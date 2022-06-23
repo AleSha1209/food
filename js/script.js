@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     //Timer
-    let deadline = '2022-06-21';
+    let deadline = '2022-06-30';
     
     function declOfNum(n, textForms) {  
         n = Math.abs(n) % 100; 
@@ -152,13 +152,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let btnOpenModal = document.querySelectorAll('[data-modal]'),
         btnCloseModal = document.querySelector('[data-modal-close]'),
-        modal = document.querySelector('.modal');
+        modal = document.querySelector('.modal'),
+        timeOutID;
+
+        function openModal() {
+            modal.classList.add('show');
+            modal.classList.remove('hide');
+            document.body.style.overflowY = 'hidden';
+        }
 
         btnOpenModal.forEach((item) => {
             item.addEventListener('click', (event) => {
-                modal.classList.add('show');
-                modal.classList.remove('hide');
-                document.body.style.overflowY = 'hidden';
+                openModal(modal);
             });
         });
 
@@ -181,6 +186,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 closeModal();
             }
         });
+
+        timeOutID = setTimeout(openModal, 10000);
+
+        let h = document.body.scrollHeight;
+        let i = document.body.scrollTop;
+
+        window.addEventListener('scroll', showModalByScroll);
+
+        function showModalByScroll() {
+            if(window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
+                openModal();
+                window.removeEventListener('scroll', showModalByScroll);
+            };
+        };
+
+        //
 
 
 
