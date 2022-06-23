@@ -116,10 +116,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function changeTimerBlock(selector, endtime) {
             
             let timerBlock = document.querySelector(selector),
-            //days = timerBlock.querySelector('#days'),
-            //hours = timerBlock.querySelector('#hours'),
-            //minutes = timerBlock.querySelector('#minutes'),
-            //seconds = timerBlock.querySelector('#seconds'),
             id = setInterval(updateTimerBlock, 1000);
 
             updateTimerBlock();
@@ -187,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        timeOutID = setTimeout(openModal, 10000);
+        //timeOutID = setTimeout(openModal, 10000);
 
         let h = document.body.scrollHeight;
         let i = document.body.scrollTop;
@@ -201,10 +197,72 @@ document.addEventListener('DOMContentLoaded', () => {
             };
         };
 
-        //
+    //Классы
 
+    class MenuCard {
+        constructor(name, desc, price, bgImg, alt, parentSelector) {
+            this.name = name;
+            this.desc = desc;
+            this.price = price;
+            this.img = bgImg;
+            this.alt = alt;
+            this.parent = document.querySelector(parentSelector);
+            this.transfer = 27;
+            this.changToUAH();
+        }
 
+        changToUAH() {
+            this.price = this.price * this.transfer;
+        }
 
+        render() {
+            let element = document.createElement('div');
+            element.className ='menu__item';
+            element.innerHTML = `
+            <img src="${this.img}" alt="${this.alt}">
+            <h3 class="menu__item-subtitle">Меню "${this.name}"</h3>
+            <div class="menu__item-descr">${this.desc}</div>
+            <div class="menu__item-divider"></div>
+            <div class="menu__item-price">
+                <div class="menu__item-cost">Цена:</div>
+                <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
+            </div>`;
+            this.parent.append(element);
+
+        }
+    };
+
+    let menuItems = [{
+        name: 'Фитнес', 
+        desc: 'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!', 
+        price: 9,
+        bgImg: 'img/tabs/vegy.jpg', 
+        alt: 'vegy',
+        parent: '.menu__field .container'
+    },
+    {
+        name: 'Премиум', 
+        desc: 'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
+        price: 15,
+        bgImg: 'img/tabs/elite.jpg', 
+        alt: 'elite',
+        parent: '.menu__field .container'
+    },
+    {
+        name: 'Постное', 
+        desc: 'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.', 
+        price: 7,
+        bgImg: 'img/tabs/post.jpg', 
+        alt: 'post',
+        parent: '.menu__field .container'
+    }
+];
+
+    menuItems.forEach(function(item) {
+        new MenuCard(item.name, item.desc, item.price, item.bgImg, item.alt,item.parent).render();
+    });
+
+    
 
 
 });
