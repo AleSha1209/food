@@ -68,9 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     //Timer
-    let deadline = '2022-06-20',
-    id,
-    timer;
+    let deadline = '2022-06-21';
     
     function declOfNum(n, textForms) {  
         n = Math.abs(n) % 100; 
@@ -84,64 +82,109 @@ document.addEventListener('DOMContentLoaded', () => {
     function dateRemaining(endtime) {
 
         let t = Date.parse(endtime),
-            userTime = new Date(),
-            timeDiff = t - Date.parse(userTime),
-            days,
-            hours,
-            minutes,
-            seconds,
-            status = false;
+        userTime = new Date(),
+        timeDiff = t - Date.parse(userTime),
+        status = 0,
+        days,
+        hours,
+        minutes,
+        seconds;
 
-            if(timeDiff > 0) {
+        if(timeDiff > 0 ) {
+            status = timeDiff;
+            days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+            hours = Math.floor((timeDiff / (1000 * 60 * 60)) % 24);
+            minutes = Math.floor((timeDiff / (1000 * 60 )) % 60);
+            seconds = Math.floor((timeDiff / 1000 ) % 60);
+        }
+        else {
+            days = 0;
+            hours = 0;
+            minutes = 0;
+            seconds = 0;
+        }
+    
+        return {
+            status: timeDiff,
+            days: days,
+            hours: hours,
+            minutes: minutes,
+            seconds: seconds
+        };
+    };
 
-                status = true;
-                days = Math.floor(timeDiff / (1000 * 60 * 60 * 24)),
-                hours = Math.floor((timeDiff / (1000 * 60 * 60)) % 24),
-                minutes = Math.floor((timeDiff / (1000 * 60 )) % 60),
-                seconds = Math.floor((timeDiff / 1000 ) % 60);
-            }
-            else {
-                status = false;
-                days = 0;
-                hours = 0;
-                minutes = 0;
-                seconds = 0;
-            }
+    function changeTimerBlock(selector, endtime) {
+            
+            let timerBlock = document.querySelector(selector),
+            //days = timerBlock.querySelector('#days'),
+            //hours = timerBlock.querySelector('#hours'),
+            //minutes = timerBlock.querySelector('#minutes'),
+            //seconds = timerBlock.querySelector('#seconds'),
+            id = setInterval(updateTimerBlock, 1000);
 
-            return {
-                status: status,
-                days: days,
-                hours: hours,
-                minutes: minutes,
-                seconds: seconds
+            updateTimerBlock();
+
+            function updateTimerBlock() {
+
+                let timer = dateRemaining(endtime),
+                d = declOfNum(timer.days, ['день', 'дня', 'дней']),
+                h = declOfNum(timer.hours, ['час', 'часа', 'часов']),
+                m = declOfNum(timer.minutes, ['минута', 'минуты', 'минут']),
+                s = declOfNum(timer.seconds, ['секунда', 'секунды', 'секунд']);
+
+                timerBlock.querySelector('#days').parentNode.innerHTML =`<span id="days">${timer.days}</span>${d}`;
+                timerBlock.querySelector('#hours').parentNode.innerHTML =`<span id="hours">${timer.hours}</span>
+                ${h}`;
+                timerBlock.querySelector('#minutes').parentNode.innerHTML = `<span id="minutes">${timer.minutes}</span>
+                ${m}`;
+                timerBlock.querySelector('#seconds').parentNode.innerHTML = `<span id="seconds">${timer.seconds}</span>
+                ${s}`; 
+
+                if(timer.status <= 0) clearInterval(id);
             };
-    };
 
-    function changeTimerBlock(timer) {
-
-            let d = declOfNum(timer.days, ['день', 'дня', 'дней']);
-            let h = declOfNum(timer.hours, ['час', 'часа', 'часов']);
-            let m = declOfNum(timer.minutes, ['минута', 'минуты', 'минут']);
-            let s = declOfNum(timer.seconds, ['секунда', 'секунды', 'секунд']);
-
-            document.querySelector('#days').parentNode.innerHTML =`<span id="days">${timer.days}</span>${d}`;
-            document.querySelector('#hours').parentNode.innerHTML =`<span id="hours">${timer.hours}</span>
-            ${h}`;
-            document.querySelector('#minutes').parentNode.innerHTML = `<span id="minutes">${timer.minutes}</span>
-            ${m}`;
-            document.querySelector('#seconds').parentNode.innerHTML = `<span id="seconds">${timer.seconds}</span>
-            ${s}`; 
+            
     }
+    changeTimerBlock('.timer', deadline);
 
 
-    function showTimerBlock() {
-        timer = dateRemaining(deadline); 
-        changeTimerBlock(timer);
-        if(timer.status == false) clearInterval(id); 
-    };
+    //Modal
 
-    showTimerBlock();
-    id = setInterval(showTimerBlock, 1000);
+    let btnOpenModal = document.querySelectorAll('[data-modal]'),
+        btnCloseModal = document.querySelector('[data-modal-close]'),
+        modal = document.querySelector('.modal');
+
+        btnOpenModal.forEach((item) => {
+            item.addEventListener('click', (event) => {
+                modal.classList.add('show');
+                modal.classList.remove('hide');
+                document.body.style.overflowY = 'hidden';
+            });
+        });
+
+        function closeModal () {
+                modal.classList.remove('show');
+                modal.classList.add('hide');
+                document.body.style.overflow = '';
+        }
+
+        modal.addEventListener('click', (event) => {
+           if(event.target && event.target === modal) {
+                closeModal();
+           }
+        });
+
+        btnCloseModal.addEventListener('click', closeModal);
+
+        document.addEventListener('keydown', (event) => {
+            if(event.key == 'Escape' && modal.classList.contains('show')) {
+                closeModal();
+            }
+        });
+
+
+
+
 
 });
 
