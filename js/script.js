@@ -1,3 +1,5 @@
+'use strict';
+
 document.addEventListener('DOMContentLoaded', () => {
 
 
@@ -267,8 +269,80 @@ document.addEventListener('DOMContentLoaded', () => {
         'menu__item'
     ).render();
 
+    //Forms
+
+    const forms = document.querySelectorAll('form'),
+            message = {
+                loading: 'Загрузка',
+                success: 'Мы свяжемся с Вами в скором времени',
+                failure: 'Что-то пошло не так...'
+            };
+    
+    forms.forEach(item => {
+        postData(item);
+    });
 
 
+    function postData(form) {
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+        const statusMessage = document.createElement('div');
+        statusMessage.classList.add('status');
+        statusMessage.textContent = message.loading;
+        form.append(statusMessage);
+
+            const formData = new FormData(form);
+
+            const request = new XMLHttpRequest();
+            request.open('POST', 'server.php');
+
+            //Отправка данных обычным способом  
+            //request.send(formData);
+
+            //Отправка данных в формате JSON
+
+            const formDataObject = {};
+            formData.forEach(function(value, key) {
+                formDataObject[key] = value;
+            });
+            const json = JSON.stringify(formDataObject);
+            request.setRequestHeader('Content-type', 'application/json');
+            request.send(json);
+
+            request.addEventListener('load', () => {
+                if(request.status === 200)  {
+                    statusMessage.textContent = message.success;
+                    form.reset();
+                    setTimeout(()=> {
+                        statusMessage.remove();
+                    }, 2000);
+                } else {
+                    statusMessage.textContent = message.error;
+                }
+                console.log(request.response);
+                
+            });
+ 
+        });
+
+    };
+
+    function showMessage() {
+        
+    }
+
+
+
+
+
+
+
+
+});
+
+/* 
     const http = require('http');
 
     const hostname = '127.0.0.1';
@@ -283,6 +357,4 @@ document.addEventListener('DOMContentLoaded', () => {
     server.listen(port, hostname, () => {
       console.log(`Server running at http://${hostname}:${port}/`);
     });
-
-});
-
+*/
